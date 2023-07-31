@@ -18,9 +18,9 @@ Python project for duplicate element detection and package dependency graph reco
     - [Tests](#tests)
 - [Exercise 2](#exercise-2)
     - [Function build_graph](#function-build_graph)
-    - [Objective 2.2](#main-objective-22)
-    - [Objective 2.3](#main-objective-23)
-    - [Objective 2.4](#main-objective-24)
+    - [Objective 2.2](#objective-22)
+    - [Objective 2.3](#objective-23)
+    - [Objective 2.4](#objective-24)
 
 ## Exercise 1
 The task is to create a function that identifies all duplicate elements in a list while retaining their order. 
@@ -140,20 +140,22 @@ pytest --runxfail -v
 ## Exercise 2
  Read a JSON file from a fixed filesystem location, containing a list of packages and their dependencies and reconstruct the full dependency graph. 
 
-### Main objective 2.2
+### Objective 2.2
 **Reconstruct the full dependency graph**
-exercise2/dependency_graph.py -> DependencyGraph()
+exercise2/dependency_graph.py -> **DependencyGraph()**
 
 
-### Main objective 2.3
+### Objective 2.3
 **A function that takes a filename as an input and returns an object representing the fully resolved graph**
-exercise2/dependency_graph.py -> build_graph()
+exercise2/dependency_graph.py -> **build_graph()**
 
 
-### Main objective 2.4
-**Run**
-exercise2/test_dependency_graph.py -> __main___
-Go to root directory of the repo,
+### Objective 2.4
+
+exercise2/test_dependency_graph.py -> **\_\_main\_\_.py**
+
+You can go to the root directory of the repo and:
+
 ```python3 -m exercise2```
 
 ### Example dependency graph for the packages
