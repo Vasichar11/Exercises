@@ -32,6 +32,7 @@ The task is to create a function that identifies all duplicate elements in a lis
 4. The **function should accept only list types** for input. (e.g., not string input)
 5. **Duplicates** are **appended only once** to the output list
 
+
 ### Main objective
 *exercise1/detect_duplicates.py -> detect_duplicates()*
 [Detect Duplicates](./exercise1/detect_duplicates.py)
