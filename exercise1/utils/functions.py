@@ -1,3 +1,4 @@
+
 def homogeneous(input_list=None):
     # Function that returns True if the elements of the input list are all of the same type
     for element in input_list:

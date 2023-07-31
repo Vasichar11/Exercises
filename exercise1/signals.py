@@ -2,6 +2,7 @@ import numpy as np
 from astropy import units as u
 from detect_duplicates import detect_duplicates
 import matplotlib.pyplot as plt
+import pandas as pd
 
 
 # Class for signals
@@ -51,6 +52,9 @@ class Signal:
             raise ValueError("Input must be a Signal object.")
         if self.signal_type != other.signal_type:
             raise ValueError("Signals must be of the same type for comparison.")
+        if self._detect_duplicates() or other._detect_duplicates():
+            raise ValueError("Signals have anomalies. To compare signals for intersection they should be free of duplicate values.")
+
         if axis == "x":
             intersections = detect_duplicates(list(self.signal[0]) + list(other.signal[0]))
         elif axis == "y":
@@ -60,31 +64,45 @@ class Signal:
 
         return intersections
 
+    def remove_duplicates(self, axis):
+        df = pd.DataFrame({'x': self.signal[0], 'y': self.signal[1]})
+        df.drop_duplicates(subset=axis, inplace=True)  # Will drop duplicates on specified axis
+        self.signal = np.array((df['x'].values, df['y'].values))
+
     def display(self):
         print(f"Signal Type: {self.signal_type}")
-        print(f"Signal: {self.signal}")
+        # print(f"Signal: {self.signal}")
         print(f"Units: {self.units}")
         print(f"Axis: {self.axis}")
         print(f"Duplicate Chance: {self.duplicate_chance}")
 
 
 if __name__ == "__main__":
-
+    # Parameters
     size = 100
-    time_array = np.arange(0, size) * 1e-5
+    time_array = np.arange(0, size) * 1e-3
+    low = 10e-3
+    high = 2 * 10e-3
+    num_intersections = 10
 
-    # Sample Beam Signal
-    beam_array = np.random.uniform(2 * 10e-3, 5 * 10e-3, size)
-    # Sample BPM Signal
-    bpm_array = np.random.uniform(10e-3, 2 * 10e-3, size)
-    # Sample ADC signal
-    adc_array = np.random.uniform(3 * 10e-3, 5 * 10e-3, size)
+    beam_array = np.random.uniform(low, high, size)  # Sample Beam Signal
+    button_array = np.random.uniform(low, high, size)  # Sample BPM Signals
+    stripline_array = np.random.uniform(low, high, size)
+    adc_array = np.random.uniform(low, high, size)  # Sample ADC signal
 
+    # Introduce random intersections for BPM signals (needed for example 2)
+    indices = np.random.choice(len(button_array), num_intersections, replace=False)
+    for i in indices:  # Place the same random value at each selected index
+        random_value = np.random.uniform(low, high)
+        button_array[i] = random_value
+        stripline_array[i] = random_value
+
+    # Signal Instances
     Beam = Signal("Beam", np.array((time_array, beam_array)), frozenset((u.second, u.ampere)))
-    Button_BPM = Signal("BPM", np.array((time_array, bpm_array)), frozenset((u.second, u.Volt)), duplicate_chance=0.1, axis='y')
+    Button_BPM = Signal("BPM", np.array((time_array, button_array)), frozenset((u.second, u.Volt)), duplicate_chance=0.1, axis='y')
+    Stripline_BPM = Signal("BPM", np.array((time_array, stripline_array)), frozenset((u.s, u.V)))
     ADC = Signal("ADC", np.array((time_array, adc_array)), frozenset((u.second, u.Volt)), duplicate_chance=0.2, axis='y')
     ADC2 = Signal("ADC", np.array((time_array, adc_array)), frozenset((u.second, u.Volt)), duplicate_chance=0.2, axis='both')
-
     signals = [Beam, Button_BPM, ADC, ADC2]
 
     # Example 1: Test signals for anomalies (duplicates values)
@@ -97,12 +115,9 @@ if __name__ == "__main__":
 
     # Example 2: Test two Beam signals for intersections in Voltage (axis=y)
 
-    # Comparing button and stripline BPM signals
-    bpm_array2 = np.random.uniform(0.999 * 10e-3, 1.9999 * 10e-3, size)
-    Stripline_BPM = Signal("BPM", np.array((time_array, bpm_array2)), frozenset((u.s, u.V)))
+    Button_BPM.remove_duplicates(axis='y')  # Drop the previously introduced duplicates
 
-    intersections = Stripline_BPM.signal_intersections(Button_BPM, "y")
-
+    intersections = Stripline_BPM.signal_intersections(Button_BPM, "y")  # Compare y axis i.e. Voltage
     print("\n\nStripline and Button identical Voltages: ", intersections)
 
     ########################
@@ -124,12 +139,14 @@ if __name__ == "__main__":
     ax[1].set_xlabel(str(list(ADC.units)[0]))
     ax[1].set_ylabel(str(list(ADC.units)[1]))
 
+    adc_duplicates = ADC._detect_duplicates()
+
     for time, voltage in zip(ADC.signal[0], ADC.signal[1]):
-        if voltage in duplicates:
+        if voltage in adc_duplicates:
             ax[1].scatter(time, voltage, c='red')
 
     # To avoid adding many labels
-    if duplicates:
+    if adc_duplicates:
         ax[1].scatter([], [], c='red', label='Duplicates')
 
     ax[0].legend(loc='lower right')
@@ -148,15 +165,20 @@ if __name__ == "__main__":
 
     fig, ax = plt.subplots(3, 1)
 
-    # Plot Stripline_BPM and Button_BPM signals on separate subplots
+    # Plot Stripline_BPM signal, Button_BPM signal, and both signals,  on separate subplots
     ax[0].plot(Stripline_BPM.signal[0], Stripline_BPM.signal[1], c='blue', label='Stripline_BPM')
     ax[1].plot(Button_BPM.signal[0], Button_BPM.signal[1], c='red', label='Button_BPM')
+
+    ax[2].plot(Stripline_BPM.signal[0], Stripline_BPM.signal[1], c='blue', label='Stripline_BPM')
+    ax[2].plot(Button_BPM.signal[0], Button_BPM.signal[1], c='red', label='Button_BPM')
 
     # Set labels
     ax[0].set_xlabel(str(list(Stripline_BPM.units)[0]))
     ax[1].set_xlabel(str(list(Button_BPM.units)[0]))
+    ax[2].set_xlabel(str(list(Button_BPM.units)[0]))
     ax[0].set_ylabel(str(list(Stripline_BPM.units)[1]))
     ax[1].set_ylabel(str(list(Button_BPM.units)[1]))
+    ax[2].set_ylabel(str(list(Button_BPM.units)[1]))
 
     # Set limits
     x_min = min(min(Stripline_BPM.signal[0]), min(Button_BPM.signal[0]))
@@ -184,13 +206,15 @@ if __name__ == "__main__":
     ax[0].set_title('Stripline_BPM Signal')
     ax[1].set_title('Button_BPM Signal')
     ax[2].set_title('Signal intersections')
-    ax[2].plot(Stripline_BPM.signal[0], Stripline_BPM.signal[1], c='blue', label='Stripline_BPM')
-    ax[2].plot(Button_BPM.signal[0], Button_BPM.signal[1], c='red', label='Button_BPM')
 
     for time, voltage in zip(Button_BPM.signal[0], Button_BPM.signal[1]):
 
         if voltage in intersections:
             ax[2].scatter(time, voltage, c='red', label='Intersections')
+
+    for item in intersections:
+        print(item in Stripline_BPM.signal[1])
+        print(item in Button_BPM.signal[1])
 
     # Show the plot
     ax[0].grid(True)
