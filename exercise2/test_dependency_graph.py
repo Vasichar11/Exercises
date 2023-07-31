@@ -5,17 +5,17 @@ from exercise2.dependency_graph import DependencyGraph, build_graph
 
 # Define a fixture to setup and teardown test json files
 @pytest.fixture(params=[
-    ('{"pkg1": ["pkg2", "pkg3"], "pkg2": ["pkg3"], "pkg3": []}', 
+    ('{"pkg1": ["pkg2", "pkg3"], "pkg2": ["pkg3"], "pkg3": []}',
      [("pkg1", ["pkg2", "pkg3"]), ("pkg2", ["pkg3"]), ("pkg3", [])]),
-    ('{"pkg1": ["pkg2"], "pkg2": ["pkg3"], "pkg3": ["pkg1"]}', 
+    ('{"pkg1": ["pkg2"], "pkg2": ["pkg3"], "pkg3": ["pkg1"]}',
      [("pkg1", ["pkg2"]), ("pkg2", ["pkg3"]), ("pkg3", ["pkg1"])]),
-    ('{"pkg1": [], "pkg2": [], "pkg3": []}', 
+    ('{"pkg1": [], "pkg2": [], "pkg3": []}',
      [("pkg1", []), ("pkg2", []), ("pkg3", [])]),
 ])
 def test_file(request):
     filename = '/tmp/test_deps.json'
     content, edges = request.param
-    
+
     with open(filename, 'w') as file:
         file.write(content)
 
