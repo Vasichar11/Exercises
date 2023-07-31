@@ -2,6 +2,25 @@
 Python project for duplicate element detection and package dependency graph reconstruction from JSON files.
 
 
+## Table of Contents
+- [Exercise 1](#exercise-1)
+    - [Assumptions](#assumptions)
+    - [Main objective](#main-objective)
+    - [Usage](#usage)
+        - [main.py](#mainpy)
+        - [signals.py](#signalspy)
+        - [Use in your code](#use-in-your-code)
+    - [Requirements for class elements](#requirements-for-class-elements)
+    - [Functions](#functions)
+        - [Unsorted lists](#unsorted-lists)
+        - [Sorted lists](#sorted-lists)
+    - [Complexity](#complexity)
+    - [Tests](#tests)
+- [Exercise 2](#exercise-2)
+    - [Function build_graph](#function-build_graph)
+    - [Objective 2.2](#main-objective-22)
+    - [Objective 2.3](#main-objective-23)
+    - [Objective 2.4](#main-objective-24)
 
 ## Exercise 1
 The task is to create a function that identifies all duplicate elements in a list while retaining their order. 
@@ -13,19 +32,19 @@ The task is to create a function that identifies all duplicate elements in a lis
 4. The **function should accept only list types** for input. (e.g. not string input)
 5. **Duplicates** are **appended only once** to the output list
 
-### To just review the main objective
+### Main objective
 *exercise1/detect_duplicates.py -> detect_duplicates()*
 
 
 ### Usage
 
-#### Main program
+#### main.py
 - The main program prompts the user to either use the default list or create a custom one
 - When a valid list is specified, it is then tested for duplicates
 - Decreased complexity for [sorted-lists](#sorted-lists)
 
 
-#### Signals.py
+#### signals.py
 Creates structs with dummy data for
  - Beam signal
  - BPM signal
@@ -108,3 +127,35 @@ To run all tests:
 ```
 pytest --runxfail -v
 ```
+
+
+## Exercise 2
+ Read a JSON file from a fixed filesystem location, containing a list of packages and their dependencies and reconstruct the full dependency graph. 
+
+### Main objective 2.2
+**Reconstruct the full dependency graph**
+exercise2/dependency_graph.py -> DependencyGraph()
+
+
+### Main objective 2.3
+**A function that takes a filename as an input and returns an object representing the fully resolved graph**
+exercise2/dependency_graph.py -> build_graph()
+
+
+### Main objective 2.4
+**Run**
+exercise2/test_dependency_graph.py -> __main___
+Go to root directory of the repo,
+```python3 -m exercise2```
+
+### Example dependency graph for the packages
+```
+- pkg1
+  - pkg2
+    - pkg3
+  - pkg3
+- pkg2
+  - pkg3
+- pkg3
+```
+
