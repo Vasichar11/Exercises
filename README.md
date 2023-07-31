@@ -48,17 +48,23 @@ python3 exercise1/main.py
 - Decreased complexity for [sorted-lists](#sorted-lists)
 
 
-#### signals.py
-```
-python3 exercise1/signals.py
-```
+#### Signals.py
+Signal class for a **2D signal** with a frozenset for its units.
+If **duplicate_chance** is specified (0 to 1), **duplicates will be introduced to the signal with the corresponding probability**.
+This method could be used from signals to test if there's some anomaly i.e. duplicate in the signal
+- in the x axis
+- in the y axis
+- in both of the axes
 
-Creates structs with dummy data for
+
+
+Creates instance of the signal class with dummy data for
  - Beam signal
  - BPM signals
  - ADC signal
 
 Introduces duplicates to the BPM and ADC signals and tests the detect_duplicates() function 
+
 
 
 

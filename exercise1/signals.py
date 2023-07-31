@@ -44,6 +44,21 @@ class Signal:
                     indices = np.random.choice(size, num_duplicates, replace=False)
                     signal[indices] = np.random.choice(signal, num_duplicates)
 
+    # Function to find intersections between two signals of the same type
+    def signal_intersections(self, other, axis):
+        if not isinstance(other, Signal):
+            raise ValueError("Input must be a Signal object.")
+        if self.signal_type != other.signal_type:
+            raise ValueError("Signals must be of the same type for comparison.")
+        if axis == "x":
+            intersections = detect_duplicates(list(self.signal[0]) + list(other.signal[0]))
+        elif axis == "y":
+            intersections = detect_duplicates(list(self.signal[1]) + list(other.signal[1]))
+        else:
+            raise ValueError("Invalid axis. Allowed values are 'x' or 'y'")
+
+        return intersections
+
     def display(self):
         print(f"Signal Type: {self.signal_type}")
         print(f"Signal: {self.signal}")
@@ -75,3 +90,14 @@ if __name__ == "__main__":
         signal.display()
         duplicates = signal._detect_duplicates()
         print(signal.signal_type, "(axis=" + signal.axis + ") has ", len(duplicates), " duplicates:", duplicates)
+
+    # Test two Beam signals for intersections in Voltage values (axis=y)
+
+    # Comparing button and stripline BPM signals
+    bpm_array2 = np.random.uniform(0.999 * 10e-3, 1.9999 * 10e-3, size) * u.volt
+    Stripline_BPM = Signal("BPM", np.array((time_array, bpm_array2)), frozenset((u.s, u.V)))
+    
+    intersections = Stripline_BPM.signal_intersections(Button_BPM, "y")
+
+
+    print("\n\nStripline and Button identical Voltages: ",intersections)
