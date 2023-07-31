@@ -25,6 +25,16 @@ The task is to create a function that identifies all duplicate elements in a lis
 - Decreased complexity for [sorted-lists](#sorted-lists)
 
 
+#### Signals.py
+Creates structs with dummy data for
+ - Beam signal
+ - BPM signal
+ - ADC signal
+
+Introduces duplicates to the BPM and ADC signals and tests the detect_duplicates() function 
+
+
+
 #### Use in your code:
 
 1) Clone the repository to your projects directory
