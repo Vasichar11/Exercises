@@ -29,7 +29,7 @@ The task is to create a function that identifies all duplicate elements in a lis
 1. **List objects** in the input list are **not necessarily of the same type**
 2. **Any object is accepted** as an element for the input list. This includes lists, instances of classes, etc.
 3. Boolean values **True and False** are **duplicates** of integers **1 and 0** respectively
-4. The **function should accept only list types** for input. (e.g. not string input)
+4. The **function should accept only list types** for input. (e.g., not string input)
 5. **Duplicates** are **appended only once** to the output list
 
 ### Main objective
@@ -48,24 +48,46 @@ python3 exercise1/main.py
 - Decreased complexity for [sorted-lists](#sorted-lists)
 
 
-#### Signals.py
-Signal class for a **2D signal** with a frozenset for its units.
-If **duplicate_chance** is specified (0 to 1), **duplicates will be introduced to the signal with the corresponding probability**.
-This method could be used from signals to test if there's some anomaly i.e. duplicate in the signal
-- in the x axis
+#### signals.py
+```
+python3 exercise1/signals.py
+```
+Requires installation: [dependencies](#dependencies)
+
+**A use of the detect_duplicates function**
+
+Creates instances of signals with dummy data for
+ - Beam signal
+ - Button BPM signal
+ - Stripline BPM signal
+ - ADC signal
+
+**Signal class**
+Member Variables:
+- **2D signal**
+- frozenset for its units
+- **duplicate_chance** can be specified (0 to 1)
+**duplicates will be introduced to the signal with the corresponding probability**.
+
+This method could be used to **test signals for anomalies** i.e., duplicates in the signal
+- in the x-axis
 - in the y axis
 - in both of the axes
 
 
+##### Dependencies
+Create virtual environment: ```python -m venv signals_venv```
+Activate: ```source signals_venv\bin\activate```
+Install dependencies: ```python -m pip install -r requirements.txt```
 
-Creates instance of the signal class with dummy data for
- - Beam signal
- - BPM signals
- - ADC signal
+##### Example use 1
 
-Introduces duplicates to the BPM and ADC signals and tests the detect_duplicates() function 
+Introduces duplicates to the BPM and ADC signals and **tests anomalies** by using detect_duplicates() function 
 
+##### Example use 2
 
+Comparing Stripline and Button BPM signals for **intersections**. Visualizing the results.
+![intersections](./docs/images/intersections.png)
 
 
 #### Use in your code:
@@ -130,7 +152,7 @@ For nested lists, dictionaries, or custom objects, Python will compare the eleme
 
 
 ### Complexity
-- If the input list is sorted then a potentially faster algorithm is used that takes into account the sorted order of the elements(ascending or descending)
+- If the input list is sorted, then a potentially faster algorithm is used that takes into account the sorted order of the elements(ascending or descending)
 - The time complexity cannot be better than O(n). There's a need to examine each element at least once to determine if it's a duplicate
 
 
@@ -144,7 +166,7 @@ pytest --runxfail -v
 
 
 ## Exercise 2
- Read a JSON file from a fixed filesystem location, containing a list of packages and their dependencies and reconstruct the full dependency graph. 
+ Read a JSON file containing a list of packages and their dependencies from a fixed filesystem location, and reconstruct the entire dependency graph. 
 
 ### Objective 2.2
 **Reconstruct the full dependency graph**
@@ -173,5 +195,4 @@ You can go to the root directory of the repo and:
 - pkg2
   - pkg3
 - pkg3
-```
 

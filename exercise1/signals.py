@@ -1,6 +1,7 @@
 import numpy as np
 from astropy import units as u
 from detect_duplicates import detect_duplicates
+import matplotlib.pyplot as plt
 
 
 # Class for signals
@@ -70,20 +71,22 @@ class Signal:
 if __name__ == "__main__":
 
     size = 100
-    time_array = np.arange(0, size) * 1e-5 * u.second
+    time_array = np.arange(0, size) * 1e-5
 
     # Sample Beam Signal
-    beam_array = np.random.uniform(2 * 10e-3, 5 * 10e-3, size) * u.volt
+    beam_array = np.random.uniform(2 * 10e-3, 5 * 10e-3, size)
     # Sample BPM Signal
-    bpm_array = np.random.uniform(10e-3, 2 * 10e-3, size) * u.volt
+    bpm_array = np.random.uniform(10e-3, 2 * 10e-3, size)
     # Sample ADC signal
-    adc_array = np.random.uniform(3 * 10e-3, 5 * 10e-3, size) * u.ampere
+    adc_array = np.random.uniform(3 * 10e-3, 5 * 10e-3, size)
 
-    Beam = Signal("Beam", np.array((time_array, beam_array)), frozenset((u.s, u.V)))
-    Button_BPM = Signal("BPM", np.array((time_array, bpm_array)), frozenset((u.s, u.A)), duplicate_chance=0.1, axis='y')
-    ADC = Signal("ADC", np.array((time_array, adc_array)), frozenset((u.s, u.V)), duplicate_chance=0.2, axis='both')
+    Beam = Signal("Beam", np.array((time_array, beam_array)), frozenset((u.second, u.ampere)))
+    Button_BPM = Signal("BPM", np.array((time_array, bpm_array)), frozenset((u.second, u.Volt)), duplicate_chance=0.1, axis='y')
+    ADC = Signal("ADC", np.array((time_array, adc_array)), frozenset((u.second, u.Volt)), duplicate_chance=0.2, axis='both')
 
     signals = [Beam, Button_BPM, ADC]
+
+    # Example 1: Test signals for anomalies (duplicates values)
 
     for signal in signals:
         print("\n\n\n")
@@ -91,12 +94,70 @@ if __name__ == "__main__":
         duplicates = signal._detect_duplicates()
         print(signal.signal_type, "(axis=" + signal.axis + ") has ", len(duplicates), " duplicates:", duplicates)
 
-    # Test two Beam signals for intersections in Voltage values (axis=y)
+    # Example 2: Test two Beam signals for intersections in Voltage (axis=y)
 
     # Comparing button and stripline BPM signals
-    bpm_array2 = np.random.uniform(0.999 * 10e-3, 1.9999 * 10e-3, size) * u.volt
+    bpm_array2 = np.random.uniform(0.999 * 10e-3, 1.9999 * 10e-3, size)
     Stripline_BPM = Signal("BPM", np.array((time_array, bpm_array2)), frozenset((u.s, u.V)))
 
     intersections = Stripline_BPM.signal_intersections(Button_BPM, "y")
 
     print("\n\nStripline and Button identical Voltages: ", intersections)
+
+    ########################
+    ########################
+    ########################
+    # Visualization
+    ########################
+    ########################
+    ########################
+
+    fig, ax = plt.subplots(3, 1)  # 2 rows, 1 column
+
+    # Plot Stripline_BPM and Button_BPM signals on separate subplots
+    ax[0].plot(Stripline_BPM.signal[0], Stripline_BPM.signal[1], c='blue', label='Stripline_BPM')
+    ax[1].plot(Button_BPM.signal[0], Button_BPM.signal[1], c='red', label='Button_BPM')
+
+    # Set labels
+    ax[0].set_xlabel(str(list(Stripline_BPM.units)[0]))
+    ax[1].set_xlabel(str(list(Button_BPM.units)[0]))
+    ax[0].set_ylabel(str(list(Stripline_BPM.units)[1]))
+    ax[1].set_ylabel(str(list(Button_BPM.units)[1]))
+
+    # Set limits
+    x_min = min(min(Stripline_BPM.signal[0]), min(Button_BPM.signal[0]))
+    x_max = max(max(Stripline_BPM.signal[0]), max(Button_BPM.signal[0]))
+    y_min = min(min(Stripline_BPM.signal[1]), min(Button_BPM.signal[1]))
+    y_max = max(max(Stripline_BPM.signal[1]), max(Button_BPM.signal[1]))
+    ax[0].set_xlim([x_min, x_max])
+    ax[1].set_xlim([x_min, x_max])
+    ax[2].set_xlim([x_min, x_max])
+    ax[0].set_ylim([y_min, y_max])
+    ax[1].set_ylim([y_min, y_max])
+    ax[2].set_ylim([y_min, y_max])
+
+    # Set ticks
+    x_ticks = np.linspace(x_min, x_max, 5)
+    y_ticks = np.linspace(y_min, y_max, 5)
+    ax[0].set_xticks(x_ticks)
+    ax[1].set_xticks(x_ticks)
+    ax[2].set_xticks(x_ticks)
+    ax[0].set_yticks(y_ticks)
+    ax[1].set_yticks(y_ticks)
+    ax[2].set_yticks(y_ticks)
+
+    # Set titles and legends
+    ax[0].set_title('Stripline_BPM Signal')
+    ax[1].set_title('Button_BPM Signal')
+    ax[2].set_title('Signal intersections')
+    print(intersections)
+    for time, voltage in zip(Button_BPM.signal[0], Button_BPM.signal[1]):
+        if voltage in intersections:
+            ax[2].scatter(time, voltage, c='red', label='Intersections')
+
+    # Show the plot
+    ax[0].grid(True)
+    ax[1].grid(True)
+    ax[2].grid(True)
+    plt.tight_layout()  # Adjusts subplot parameters to give specified padding.
+    plt.show()
