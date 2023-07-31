@@ -1,4 +1,6 @@
 import pytest
+import random
+from collections import Counter  # Just for testing!
 from detect_duplicates import detect_duplicates
 from utils.classes import Proton, Date
 
@@ -35,6 +37,39 @@ def test_detect_duplicates(input_list, expected_duplicates):
 def test_invalid_list():
     with pytest.raises(TypeError):
         detect_duplicates("test")
+
+
+# Fixture to generate random lists
+@pytest.fixture
+def generate_random_list():
+    length = 100
+    types = [int, float, str, bool]
+
+    random_list = []
+    for _ in range(length):
+        random_type = random.choice(types)
+        if random_type is int:
+            random_element = random.randint(-100, 100)
+        elif random_type is float:
+            random_element = random.uniform(-100, 100)
+        elif random_type is str:
+            random_element = ''.join(random.choices('abcdefghijklmnopqrstuvwxyz', k=random.randint(1, 10)))
+        elif random_type is bool:
+            random_element = random.choice([True, False])
+        else:
+            raise ValueError(f"Unsupported type: {random_type}")
+
+        random_list.append(random_element)
+
+    return random_list
+
+
+# Test random lists by comparing results with third-party library solution
+def test_third_party(generate_random_list):
+    counter = Counter(generate_random_list)
+    duplicates_third_party = [item for item, count in counter.items() if count > 1]
+    duplicates_standard = detect_duplicates(generate_random_list)
+    assert duplicates_standard == duplicates_third_party
 
 
 """SUCCESS!
