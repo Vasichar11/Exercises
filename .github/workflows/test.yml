@@ -1,7 +1,7 @@
 name: Test
 on:
   push:
-    branches: [main,improve,CLI]
+    branches: [main,improve,CLI,signals]
 jobs:
   build:
     runs-on: ubuntu-latest
