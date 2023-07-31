@@ -96,8 +96,7 @@ if __name__ == "__main__":
     # Comparing button and stripline BPM signals
     bpm_array2 = np.random.uniform(0.999 * 10e-3, 1.9999 * 10e-3, size) * u.volt
     Stripline_BPM = Signal("BPM", np.array((time_array, bpm_array2)), frozenset((u.s, u.V)))
-    
+
     intersections = Stripline_BPM.signal_intersections(Button_BPM, "y")
 
-
-    print("\n\nStripline and Button identical Voltages: ",intersections)
+    print("\n\nStripline and Button identical Voltages: ", intersections)
