@@ -1,5 +1,6 @@
 import pytest
 import random
+import numpy as np
 from collections import Counter  # Just for testing!
 from detect_duplicates import detect_duplicates, detect_duplicates_unsorted, detect_duplicates_sorted
 from utils.classes import Proton, Date
@@ -84,6 +85,17 @@ def test_third_party(generate_random_list):
     duplicates_third_party = [item for item, count in counter.items() if count > 1]
     duplicates_standard = detect_duplicates(generate_random_list)
     assert duplicates_standard == duplicates_third_party
+
+
+# Current failing tests
+@pytest.mark.xfail(reason="Test fails. Using ndarray as elements is not supported yet.")
+def test_lists():
+    array1 = np.array([1, 2, 3])
+    array2 = np.array(([1, 2, 3], [1, 2, 3]))
+    array3 = np.array([1, 2, 3])
+    failing_list = [array1, array2, [4, 5, 6], [1, 2, 3], array3, 14, [8, 32], "8", [1, 2, 3], [8, 32]]
+    expected_list = [array1, [1, 2, 3], [8, 32]]
+    assert detect_duplicates_unsorted(failing_list) == expected_list
 
 
 """SUCCESS!

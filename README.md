@@ -26,12 +26,22 @@ The task is to create a function that identifies all duplicate elements in a lis
 
 
 #### Signals.py
-Creates structs with dummy data for
+Signal class for a **2D signal** with a frozenset for its units.
+If **duplicate_chance** is specified (0 to 1), **duplicates will be introduced to the signal with the corresponding probability**.
+This method could be used from signals to test if there's some anomaly i.e. duplicate in the signal
+- in the x axis
+- in the y axis
+- in both of the axes
+
+
+
+Creates instance of the signal class with dummy data for
  - Beam signal
  - BPM signal
  - ADC signal
 
 Introduces duplicates to the BPM and ADC signals and tests the detect_duplicates() function 
+
 
 
 
