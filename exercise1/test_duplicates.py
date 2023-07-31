@@ -1,7 +1,7 @@
 import pytest
 import random
 from collections import Counter  # Just for testing!
-from detect_duplicates import detect_duplicates
+from detect_duplicates import detect_duplicates, detect_duplicates_unsorted, detect_duplicates_sorted
 from utils.classes import Proton, Date
 
 
@@ -30,6 +30,20 @@ proton4 = Proton(15e-6, 1000e3, 90, 45)
 def test_detect_duplicates(input_list, expected_duplicates):
     duplicates = detect_duplicates(input_list)
     assert duplicates == expected_duplicates
+
+
+@pytest.mark.parametrize("input_list, expected_duplicates", [
+    ([1, 2, 3, 3, 4, 4, 5], [3, 4]),
+    ([-211.32, -90.2, -90.2, -1.3, 0.3, 0.3, 3.14, 3.14, 4.4, 12.4, 10e5], [-90.2, 0.3, 3.14]),
+    ([True, True, False, False, False], [True, False]),
+    (["z", "y", "x", "x", "d", "c", "c", "c", "b", "a"], ["x", "c"]),
+    ([[0, 1], [4, 2], [4, 2], [4, 2, 1], [91.2, 3123, 99], [100], [100], [100, 1], [108.23, 99, 99, 99, 99, 99, 99, 99]], [[4, 2], [100]])
+])
+# Test sorted lists using detect_duplicates_sorted(). Also, compare using detect_duplicates_unsorted()
+def test_detect_duplicates_sorted(input_list, expected_duplicates):
+    duplicates1 = detect_duplicates_sorted(input_list)
+    duplicates2 = detect_duplicates_unsorted(input_list)
+    assert duplicates1 == duplicates2 == expected_duplicates
 
 
 # Expected fails
