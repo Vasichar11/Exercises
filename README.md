@@ -34,20 +34,28 @@ The task is to create a function that identifies all duplicate elements in a lis
 
 ### Main objective
 *exercise1/detect_duplicates.py -> detect_duplicates()*
-
+[Detect Duplicates](./exercise1/detect_duplicates.py)
 
 ### Usage
 
 #### main.py
+```
+python3 exercise1/main.py
+```
+
 - The main program prompts the user to either use the default list or create a custom one
 - When a valid list is specified, it is then tested for duplicates
 - Decreased complexity for [sorted-lists](#sorted-lists)
 
 
 #### signals.py
+```
+python3 exercise1/signals.py
+```
+
 Creates structs with dummy data for
  - Beam signal
- - BPM signal
+ - BPM signals
  - ADC signal
 
 Introduces duplicates to the BPM and ADC signals and tests the detect_duplicates() function 
