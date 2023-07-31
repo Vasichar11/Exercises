@@ -82,9 +82,10 @@ if __name__ == "__main__":
 
     Beam = Signal("Beam", np.array((time_array, beam_array)), frozenset((u.second, u.ampere)))
     Button_BPM = Signal("BPM", np.array((time_array, bpm_array)), frozenset((u.second, u.Volt)), duplicate_chance=0.1, axis='y')
-    ADC = Signal("ADC", np.array((time_array, adc_array)), frozenset((u.second, u.Volt)), duplicate_chance=0.2, axis='both')
+    ADC = Signal("ADC", np.array((time_array, adc_array)), frozenset((u.second, u.Volt)), duplicate_chance=0.2, axis='y')
+    ADC2 = Signal("ADC", np.array((time_array, adc_array)), frozenset((u.second, u.Volt)), duplicate_chance=0.2, axis='both')
 
-    signals = [Beam, Button_BPM, ADC]
+    signals = [Beam, Button_BPM, ADC, ADC2]
 
     # Example 1: Test signals for anomalies (duplicates values)
 
@@ -107,12 +108,45 @@ if __name__ == "__main__":
     ########################
     ########################
     ########################
-    # Visualization
+    # Visualization Example 1
     ########################
     ########################
     ########################
 
-    fig, ax = plt.subplots(3, 1)  # 2 rows, 1 column
+    fig, ax = plt.subplots(2, 1)
+
+    ax[0].plot(ADC.signal[0], ADC.signal[1], c='blue', label=ADC.signal_type)
+    ax[0].set_xlabel(str(list(ADC.units)[0]))
+    ax[0].set_ylabel(str(list(ADC.units)[1]))
+    ax[0].set_title(ADC.signal_type)
+
+    ax[1].plot(ADC.signal[0], ADC.signal[1], c='blue', label=ADC.signal_type)
+    ax[1].set_xlabel(str(list(ADC.units)[0]))
+    ax[1].set_ylabel(str(list(ADC.units)[1]))
+
+    for time, voltage in zip(ADC.signal[0], ADC.signal[1]):
+        if voltage in duplicates:
+            ax[1].scatter(time, voltage, c='red')
+
+    # To avoid adding many labels
+    if duplicates:
+        ax[1].scatter([], [], c='red', label='Duplicates')
+
+    ax[0].legend(loc='lower right')
+    ax[1].legend(loc='lower right')
+    ax[0].grid()
+    ax[1].grid()
+    plt.show()
+
+    ########################
+    ########################
+    ########################
+    # Visualization Example 2
+    ########################
+    ########################
+    ########################
+
+    fig, ax = plt.subplots(3, 1)
 
     # Plot Stripline_BPM and Button_BPM signals on separate subplots
     ax[0].plot(Stripline_BPM.signal[0], Stripline_BPM.signal[1], c='blue', label='Stripline_BPM')
@@ -150,8 +184,11 @@ if __name__ == "__main__":
     ax[0].set_title('Stripline_BPM Signal')
     ax[1].set_title('Button_BPM Signal')
     ax[2].set_title('Signal intersections')
-    print(intersections)
+    ax[2].plot(Stripline_BPM.signal[0], Stripline_BPM.signal[1], c='blue', label='Stripline_BPM')
+    ax[2].plot(Button_BPM.signal[0], Button_BPM.signal[1], c='red', label='Button_BPM')
+
     for time, voltage in zip(Button_BPM.signal[0], Button_BPM.signal[1]):
+
         if voltage in intersections:
             ax[2].scatter(time, voltage, c='red', label='Intersections')
 
@@ -159,5 +196,5 @@ if __name__ == "__main__":
     ax[0].grid(True)
     ax[1].grid(True)
     ax[2].grid(True)
-    plt.tight_layout()  # Adjusts subplot parameters to give specified padding.
+    plt.tight_layout()
     plt.show()

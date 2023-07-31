@@ -83,6 +83,7 @@ Install dependencies: ```python -m pip install -r requirements.txt```
 ##### Example use 1
 
 Introduces duplicates to the BPM and ADC signals and **tests anomalies** by using detect_duplicates() function 
+![duplicates](./docs/images/duplicates.png)
 
 ##### Example use 2
 
